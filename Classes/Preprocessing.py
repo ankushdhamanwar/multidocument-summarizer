@@ -1,20 +1,27 @@
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
+from pywsd import disambiguate
 from nltk import pos_tag
 eng_stops = set(stopwords.words('english'))
 
 def preprocessing(sent1,sent2):
+    sense1 = disambiguate(sent1)
+    dict1 = {}
+    for x in sense1:
+        dict1[x[0]] = x[1]
+    sense2 = disambiguate(sent2)
+    dict2 = {}
+    for x in sense2:
+        dict2[x[0]] = x[1]
+
+
     q1_toks = word_tokenize(sent1)
     q2_toks = word_tokenize(sent2)
-    q1_toks = [word for  word in q1_toks if word not in eng_stops]
-    q2_toks = [word for  word in q2_toks if word not in eng_stops]
-    q1_tagged_toks = pos_tag(q1_toks)
-    #print(q1_tagged_toks)
-    q2_tagged_toks = pos_tag(q2_toks)
-    #print(q2_tagged_toks)
-    q1_filtered_toks = [words[0] for words in q1_tagged_toks if words[1].startswith('N') or words[1].startswith('V')]
-    q2_filtered_toks = [words[0] for words in q2_tagged_toks if words[1].startswith('N') or words[1].startswith('V')]
+    tagged1 = pos_tag(q1_toks)
+    tagged2 = pos_tag(q2_toks)
+    q1_stop_filtered_toks = [word for word in tagged1 if word[0] not in eng_stops]
+    q2_stop_filtered_toks = [word for word in tagged2 if word[0] not in eng_stops]
+    q1_stop_pos_filtered_toks = [word[0] for word in q1_stop_filtered_toks if 'NN' in word[1] or 'VB' in word[1]]
+    q2_stop_pos_filtered_toks = [word[0] for word in q2_stop_filtered_toks if 'NN' in word[1] or 'VB' in word[1]]
 
-    # q1_filtered_toks = [words[0] for words in q1_tagged_toks if 'NN' in words[1]  or 'VB' in words[1]]
-    # q2_filtered_toks = [words[0] for words in q2_tagged_toks if 'NN' in words[1]  or 'VB' in words[1]]
-    return q1_filtered_toks, q2_filtered_toks
+    return dict1, q1_stop_pos_filtered_toks, dict2, q2_stop_pos_filtered_toks
