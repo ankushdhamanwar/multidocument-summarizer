@@ -1,23 +1,23 @@
 from nltk.corpus import wordnet as wn
 import math
 
-def proper_synset(word_one , word_two):
-    pair = (None,None)
-    maximum_similarity = -1
-    synsets_one = wn.synsets(word_one)
-    synsets_two = wn.synsets(word_two)
-    if(len(synsets_one)!=0 and len(synsets_two)!=0):
-        for synset_one in synsets_one:
-            for synset_two in synsets_two:
-                similarity = wn.path_similarity(synset_one,synset_two)
-                if(similarity == None):
-                    sim = -2
-                elif(similarity > maximum_similarity):
-                    maximum_similarity = similarity
-                    pair = synset_one,synset_two
-    else:
-        pair = (None , None)
-    return pair
+# def proper_synset(word_one , word_two):
+#     pair = (None,None)
+#     maximum_similarity = -1
+#     synsets_one = wn.synsets(word_one)
+#     synsets_two = wn.synsets(word_two)
+#     if(len(synsets_one)!=0 and len(synsets_two)!=0):
+#         for synset_one in synsets_one:
+#             for synset_two in synsets_two:
+#                 similarity = wn.path_similarity(synset_one,synset_two)
+#                 if(similarity == None):
+#                     sim = -2
+#                 elif(similarity > maximum_similarity):
+#                     maximum_similarity = similarity
+#                     pair = synset_one,synset_two
+#     else:
+#         pair = (None , None)
+#     return pair
 
 
 CONST_ALPHA = 0.2
@@ -32,7 +32,7 @@ def length_between_words(synset_one , synset_two):
             words_synet1 = set([word.name() for word in synset_one.lemmas()])
             words_synet2 = set([word.name() for word in synset_two.lemmas()])
             if(len(words_synet1) + len(words_synet2) > len(words_synet1.union(words_synet2))):
-                length = 0
+                length = 1
             else:
                 #finding the actual distance
                 length = synset_one.shortest_path_distance(synset_two)
@@ -66,8 +66,8 @@ def depth_common_subsumer(synset_one,synset_two):
     return (math.exp(CONST_BETA * height) - math.exp(-CONST_BETA * height))/(math.exp(CONST_BETA * height) + math.exp(-CONST_BETA * height))
 
 
-def word_similarity(word1, word2):
+def word_similarity(synset_word1, synset_word2):
     # if word1.lower() == word2.lower():
     #     return 1
-    synset_word1, synset_word2 = proper_synset(word1, word2)
+    #synset_word1, synset_word2 = proper_synset(word1, word2)
     return length_between_words(synset_word1, synset_word2) * depth_common_subsumer(synset_word1, synset_word2)
