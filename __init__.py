@@ -22,16 +22,20 @@ from nltk.tokenize import sent_tokenize
 from Classes.Preprocessing import preprocessing
 from Classes.SentenceSimilarity import sentence_similarity
 
-q1_sents_tok = sent_tokenize(q7)
-q2_sents_tok = sent_tokenize(q8)
+q1_sents_tok = sent_tokenize(q1)
+q2_sents_tok = sent_tokenize(q2)
+
 sim_matrix =np.zeros((len(q1_sents_tok),len(q2_sents_tok)))
-print(q1_sents_tok,"\n",q2_sents_tok)
+
 
 for x in range(len(q1_sents_tok)):
     for y in range(len(q2_sents_tok)):
-        q1_filtered_toks, q2_filtered_toks = preprocessing(q1_sents_tok[x], q2_sents_tok[y])
-        print(q1_filtered_toks,"\n",q2_filtered_toks)
-        sim = sentence_similarity(q1_filtered_toks, q2_filtered_toks)
+        sense1, q1_filtered_toks, sense2, q2_filtered_toks = preprocessing(q1_sents_tok[x], q2_sents_tok[y])
+        q1s = " ".join(q1_filtered_toks)
+        q2s = " ".join(q2_filtered_toks)
+        print(q1s,"\n",q2s)
+        sim = sentence_similarity(sense1, q1_filtered_toks, sense2, q2_filtered_toks)
+        print(sim,"\n")
         sim_matrix[x][y] = sim
 
 
