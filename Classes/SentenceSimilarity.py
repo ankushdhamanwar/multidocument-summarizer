@@ -34,7 +34,7 @@ def sentence_similarity(dict1, q1_toks, dict2, q2_toks):
         i1 = i1 + 1
         if max_sim > 0.8025:
             c1 = c1 + 1
-    print(sem_vector_v1, c1)
+    # print(sem_vector_v1, c1)
     sim = 0
     max_sim = 0
     for word1 in q2_toks:
@@ -53,12 +53,12 @@ def sentence_similarity(dict1, q1_toks, dict2, q2_toks):
         i2 = i2 + 1
         if max_sim > 0.8025:
             c2 = c2 + 1
-    print(sem_vector_v2, c2)
+    # print(sem_vector_v2, c2)
     c = (c1 + c2) / CONST_GAMMA
 
     if c == 0:
         c = max_len / 2
-    print(c)
+    # print(c)
     s = (np.linalg.norm(sem_vector_v1) * np.linalg.norm(sem_vector_v2))
     #print(s)
     sim = s / c

@@ -13,34 +13,131 @@ q2 = "King Norodom Sihanouk has declined requests to chair a summit of Cambodia'
 q5= "A gem is a jewel or stone that is used in jewellery."
 q6 = "A jewel is a precious stone used to decorate valuable things that you wear, such as rings or necklaces."
 q7 = """Black holes are some of the strangest and most fascinating objects found in outer space. Black holes are invisible. They are objects of extreme density, with such strong gravitational attraction that even light cannot escape from their grasp if it comes near enough."""
-q8 = """A black hole is a region in space where the pulling force of gravity is so strong that light is not able to escape. The strong gravity occurs because matter has been pressed into a tiny space. Some black holes are a result of dying stars. Because no light can escape,black holes are invisible."""
+q8 = """A black hole is a region in space where the pulling force of gravity is so strong that light is not able to escape. The strong gravity occurs because matter has been pressed into a tiny space. Because no light can escape,black holes are invisible."""
 
 
 import numpy as np
 from nltk.tokenize import sent_tokenize
-
-from Classes.Preprocessing import preprocessing
+import pandas as pd
+from Classes.Preprocessing import preprocessing,processData
 from Classes.SentenceSimilarity import sentence_similarity
 
-q1_sents_tok = sent_tokenize(q1)
-q2_sents_tok = sent_tokenize(q2)
+# q1_sents_tok = sent_tokenize(q7)
+# q2_sents_tok = sent_tokenize(q8)
+
+q1_sents_tok =[] 
+q2_sents_tok =[]
+with open('data/DUC2004_documents_cleaned_tokenized/d31050t_raw/NYT19981222.0021.txt','r') as f:
+    doc =  f.read()
+    q1_sents_tok = sent_tokenize(doc)
+
+with open('data/DUC2004_documents_cleaned_tokenized/d31050t_raw/NYT19981221.0377.txt','r') as f:
+    doc = f.read()
+    q2_sents_tok = sent_tokenize(doc)
+
 
 sim_matrix =np.zeros((len(q1_sents_tok),len(q2_sents_tok)))
 
+q1_filtered_tok,q1_disamb_dic = processData(q1_sents_tok)
+q2_filtered_tok,q2_disamb_dic = processData(q2_sents_tok)
+
+# q1s = []
+# for s in q1_filtered_tok:
+#     q1s.append(" ".join(s))
+
+# for s in q2_filtered_tok:
+#     q1s.append(" ".join(s))
+
+# from sklearn.feature_extraction.text import CountVectorizer
+
+# vec = CountVectorizer()
+# matrix = vec.fit_transform(q1s)
+# df = pd.DataFrame(matrix.toarray(), columns=vec.get_feature_names())
+
+# print(df['holes'])
+from collections import Counter
+wordCounter = Counter()
+for s in q1_filtered_tok:
+    wordCounter.update(s)
+
+for s in q2_filtered_tok:
+    wordCounter.update(s)
+
+
+# print(df.head())
+
+print('Preprocessing done!')
+for i in range(len(q1_filtered_tok)):
+    for j in range(len(q2_filtered_tok)):
+
+        # q1s = " ".join(q1_filtered_toks[i])
+        # q2s = " ".join(q2_filtered_toks[j])
+        # print(q1s,"\n",q2s)
+        sim = sentence_similarity(q1_disamb_dic[i], q1_filtered_tok[i], q2_disamb_dic[j], q2_filtered_tok[j])
+        # print(sim,"\n")
+        sim_matrix[i][j] = sim
+
+
+# for x in range(len(q1_sents_tok)):
+#     for y in range(len(q2_sents_tok)):
+#         sense1, q1_filtered_toks, sense2, q2_filtered_toks = preprocessing(q1_sents_tok[x], q2_sents_tok[y])
+#         q1s = " ".join(q1_filtered_toks)
+#         q2s = " ".join(q2_filtered_toks)
+#         # print(q1s,"\n",q2s)
+#         sim = sentence_similarity(sense1, q1_filtered_toks, sense2, q2_filtered_toks)
+#         # print(sim,"\n")
+#         sim_matrix[x][y] = sim
+
+
 
 for x in range(len(q1_sents_tok)):
     for y in range(len(q2_sents_tok)):
-        sense1, q1_filtered_toks, sense2, q2_filtered_toks = preprocessing(q1_sents_tok[x], q2_sents_tok[y])
-        q1s = " ".join(q1_filtered_toks)
-        q2s = " ".join(q2_filtered_toks)
-        print(q1s,"\n",q2s)
-        sim = sentence_similarity(sense1, q1_filtered_toks, sense2, q2_filtered_toks)
-        print(sim,"\n")
-        sim_matrix[x][y] = sim
+        print(sim_matrix[x][y],end="\t")
+    print()
+
+def getMaxWithIndex(sim):
+    d = {}
+    for i,similarities in enumerate(sim):
+        m = -1
+        index = -1
+        for j,val in enumerate(similarities):
+            if m < val :
+                m = val
+                index = j
+        d[(i,j)]=m
+    return d
 
 
 
-for x in range(len(q1_sents_tok)):
-    for y in range(len(q2_sents_tok)):
-        print(sim_matrix[x][y],"    ")
-    print("\n")
+dics = getMaxWithIndex(sim_matrix)
+
+print("\n \n")
+
+import operator
+sorted_x = sorted(dics.items(), key=operator.itemgetter(1),reverse=True)
+print(sorted_x)
+
+# for k,v in sorted_x:
+#     print(q1_sents_tok[k[0]],end=" ")
+
+# print("\n \n")
+
+# sorted_x = [tup for tup,v in sorted_x]
+leng = int(len(sorted_x)/4)
+
+for k,v in sorted_x[:leng]:
+    if v <0.5:
+        print(k,v)
+        break
+    q1score = 0
+    for word in q1_filtered_tok[k[0]]:
+        q1score += wordCounter[word]
+    q2score = 0
+    for word in q2_filtered_tok[k[1]]:
+        q2score += wordCounter[word]
+    if q1score> q2score:
+        print(q1_sents_tok[k[0]],end=" ")
+    else:
+        print(q2_sents_tok[k[1]],end=" ")
+
+print()
