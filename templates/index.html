@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+    <title>Summarizer</title>
+    <style>
+        /* Set height of the grid so .sidenav can be 100% (adjust if needed) */
+    .row.content {height: 1500px}
+
+    /* Set gray background color and 100% height */
+    .sidenav {
+      background-color: #f1f1f1;
+      height: 100%;
+    }
+
+    /* Set black background color, white text and some padding */
+    footer {
+      background-color: #555;
+      color: white;
+      padding: 15px;
+    }
+
+    /* On small screens, set height to 'auto' for sidenav and grid */
+    @media screen and (max-width: 767px) {
+      .sidenav {
+        height: auto;
+        padding: 15px;
+      }
+      .row.content {height: auto;}
+    }
+    /*loader style coding */
+    .loader {
+    visibility:hidden;
+  border: 6px solid #f3f3f3; /* Light grey */
+  border-top: 6px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+  <div class="row content">
+    <div class="col-sm-2 sidenav">
+      <h4>NLTK blog</h4>
+      <ul class="nav nav-pills nav-stacked">
+        <li class="active"><a href="#section1">Home</a></li>
+        <li><a href="#section2">Team</a></li>
+        <li><a href="#section3">Approach</a></li>
+        <li><a href="#section3">Performance</a></li>
+      </ul><br>
+      <div class="input-group">
+        <input type="text" class="form-control" placeholder="Search Blog..">
+        <span class="input-group-btn">
+          <button class="btn btn-default" type="button">
+            <span class="glyphicon glyphicon-search"></span>
+          </button>
+        </span>
+      </div>
+    </div>
+
+    <div class="col-sm-9">
+
+      <form role="form" action="http://localhost:5000/" method="post">
+
+
+      <hr>
+        <div class="col-sm-12">
+         <div class="col-sm-6">
+      <h2>Document 1:</h2>
+
+        <h4><small>ENTER TEXT</small></h4>
+
+
+            <div class="form-group">
+              <textarea name='text1' class="form-control" rows="10" required>{{result['res1']}}</textarea>
+            </div>
+
+              <br><br>
+
+
+      </div>
+        <div class="col-sm-6">
+      <h2>Document 2:</h2>
+
+        <h4><small>ENTER TEXT</small></h4>
+
+            <div class="form-group">
+              <textarea name='text2' class="form-control" rows="10" required>{{result['res2']}}</textarea>
+            </div>
+        </div>
+          <div align="right">
+          <button type="submit" onclick="myFunction()" class="btn btn-success">Summarize</button>
+            </div>
+      </form>
+
+
+
+          <br><br>
+
+  <div class="col-sm-12">
+
+      <h4><small>GENERATED SUMMARY</small></h4>
+      <hr>
+      <h2>SUMMARY</h2>
+
+       <div align="center" id="loader"><div class="loader" align="right"></div></div>
+      <form role="form">
+        <div class="form-group">
+          <textarea  id='da' class="form-control" rows="10" required>{{result['result']}}</textarea>
+        </div>
+        <button type="submit" class="btn btn-success">Clear</button>
+      </form>
+
+      <br><br>
+
+
+
+
+  </div>
+    </div>
+  </div>
+</div>
+
+<footer class="container-fluid">
+  <p>Footer Text</p>
+</footer>
+
+</body>
+</html>
